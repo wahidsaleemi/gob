@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genesis of Bitcoin</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: black;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: Arial, sans-serif;
+            flex-direction: column;
+        }
+        canvas {
+            display: block;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        #countdown {
+            font-size: 7em;
+            text-align: center;
+            position: absolute;
+            top: 20%;
+            z-index: 1;
+        }
+        #genesisText {
+            font-size: 5em;
+            text-align: center;
+            position: absolute;
+            top: 60%;
+            z-index: 1;
+            background: linear-gradient(to right, yellow, orange, red);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+        #callinfoText {
+            font-size: 2em;
+            text-align: center;
+            position: absolute;
+            top: 75%;
+            z-index: 1;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="matrixCanvas"></canvas>
+    <div id="countdown"></div>
+    <div id="genesisText">The Genesis of Bitcoin</div>
+    <div id="callinfoText">Sign up at: <a href="https://aka.ms/GoB" style="color: white; text-decoration: underline;">https://aka.ms/GoB</a></div>
+    <script>
+        var canvas = document.getElementById('matrixCanvas');
+        var ctx = canvas.getContext('2d');
+
+        // Making the canvas full screen
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Characters to be used in the animation
+        var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        letters = letters.split('');
+
+        var fontSize = 16;
+        var columns = canvas.width / fontSize;
+
+        // Setting up the drops
+        var drops = [];
+        for (var i = 0; i < columns; i++) {
+            drops[i] = 1;
+        }
+
+        // Setting up the draw function
+        function draw() {
+            ctx.fillStyle = 'rgba(0, 0, 0, .1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#0f0';
+            ctx.font = fontSize + 'px arial';
+
+            for (var i = 0; i < drops.length; i++) {
+                var text = letters[Math.floor(Math.random() * letters.length)];
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+
+                drops[i]++;
+                if (drops[i] * fontSize > canvas.height && Math.random() > .95) {
+                    drops[i] = 0;
+                }
+            }
+        }
+
+        // Loop the animation
+        setInterval(draw, 33);
+
+        // Adjust canvas size on window resize
+        window.addEventListener('resize', function() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            columns = canvas.width / fontSize;
+            drops = [];
+            for (var i = 0; i < columns; i++) {
+                drops[i] = 1;
+            }
+        });
+    </script>
+    <script>
+        function updateCountdown() {
+            const targetDate = new Date('January 10, 2025 15:00:00 CST').getTime();
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toString().padStart(2, '0');
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)).toString().padStart(2, '0');
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000).toString().padStart(2, '0');
+
+            document.getElementById('countdown').innerHTML = `${days} Days<br>${hours}:${minutes}:${seconds}`;
+
+            if (distance < 0) {
+                clearInterval(interval);
+                document.getElementById('countdown').innerHTML = "EXPIRED";
+            }
+        }
+
+        const interval = setInterval(updateCountdown, 1000);
+        updateCountdown();
+    </script>
+</body>
+</html>
